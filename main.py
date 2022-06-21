@@ -3,106 +3,192 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
+import sqlite3
 import sqlalchemy as db
 
 # Datensätze laden
-train = pd.read_csv("/Users/marvinschmitt/Library/CloudStorage/OneDrive-Persönlich/M.Sc. Data Science/06 Python/Datensatz/train.csv")
-test = pd.read_csv("/Users/marvinschmitt/Library/CloudStorage/OneDrive-Persönlich/M.Sc. Data Science/06 Python/Datensatz/test.csv")
-ideal = pd.read_csv(("/Users/marvinschmitt/Library/CloudStorage/OneDrive-Persönlich/M.Sc. Data Science/06 Python/Datensatz/ideal.csv"))
+train = pd.read_csv(
+    "/Users/marvinschmitt/Library/CloudStorage/OneDrive-Persönlich/M.Sc. Data Science/06 Python/Datensatz/train.csv")
+test = pd.read_csv(
+    "/Users/marvinschmitt/Library/CloudStorage/OneDrive-Persönlich/M.Sc. Data Science/06 Python/Datensatz/test.csv")
+test.sort_values(0,1)
+#print(test)
+ideal = pd.read_csv(
+    "/Users/marvinschmitt/Library/CloudStorage/OneDrive-Persönlich/M.Sc. Data Science/06 Python/Datensatz/ideal.csv")
+
+# DB Connection 
+# https://leportella.com/sqlalchemy-tutorial/
+
+engine = db.create_engine("sqlite+pysqlite:////Users/marvinschmitt/Library/CloudStorage/OneDrive-Persönlich/M.Sc. Data Science/06 Python/python-IU/pythonsqlite.db", echo=True, future=True)
+
+from sqlalchemy.orm import sessionmaker
+Session = sessionmaker(bind=engine)
+session = Session()
+
+    
+#train.to_sql('train',engine, index=False, if_exists='append')
+#ideal.to_sql('ideal',engine, index=False, if_exists='append')
 
 
+def visualize():
+    print(train.head())
+    train.shape
+    sns.pairplot(train)
+    ideal.head()
+    ideal.shape
+    plt.plot(ideal['x'],ideal['y49'])
+    plt.scatter(train["x"],train["y4"])
+    plt.show()
 
-
-"""print(train.head())
-train.shape
-sns.pairplot(train)
-ideal.head()
-ideal.shape
-plt.plot(ideal['x'],ideal['y49'])
-plt.scatter(train["x"],train["y4"])
-plt.show()"""
 
 # berechnet Residuen training - ideal
 # NICHT ÄNDERN!! 
 
-def calculateOneSumSquare():  # erst mal nur für ideal.y1
+def calculateSumSquareY1():  # erst mal nur für ideal.y1
     """
     Returns sum of squared residuals
     -------
-   berechnet train - ideal pro reihe ^2 
+   berechnet train - ideal pro zeile ^2 
     """
-    difference=[]
-    for i in train.index:
-        diff = (train['y1'][i] - ideal['y1'][i])**2
-        difference.append(diff)
-    return sum(difference)
-#print("def calculateLeastSquare", calculateOneSumSquare())
-#print(pd.DataFrame(difference))
+    lowest_value = 999999999
+    
 
-"""
-# minimalen wert für y1 berechnen 
-df = pd.DataFrame(index=np.arange(-20,20,0.1),columns=np.arange(1,51))
-#print(df.shape)
-
-difference=[]
-dfn = pd.DataFrame(index=np.arange(0,401))
-print(dfn.shape)
-
-def calculation ():
-#für jede y-Spalte in ideal...
-    for column in ideal.iloc[:,1:51]:
-        dfn[column] = pd.NaT
+   # while ac_value :
         
-        for column1 in train.iloc[:,1:5]:
-            
+    for column in ideal.columns[1:]:
         #print(column)
-        #...die Differenz zwischen train und ideal berechnen (pro Zeile)
-            for row in train.index:
-                #print(row)
-                squared_residual = (train['y1'][row] - ideal[column][row])**2
-                difference.append(squared_residual)
-                
-                dfn[column][row] = squared_residual
-                #dfn.insert(row, column, squared_residual)
+        for i in train.index:           
+            difference=[]
+            #print(i)
+            diff = (train['y1'][i] - ideal[column][i]) ** 2
+            difference.append(diff)
+            
+        new_value = sum(difference)
+    
+        if new_value < lowest_value:
+            lowest_value = new_value
+            ideal_function = column
+            pass
+        #else:
+         #   break
+    print("The ideal function for y1 is:",ideal_function)
         
-#print(dfn.head(20))
-df_sum = pd.DataFrame()
-#OLS berechnen pro y
-for column in dfn:
-    sum_error = dfn[column].sum()
-    #df_sum[column] = pd.NaT
-    df_sum[column][0] = sum_error
-print(df_sum.head())
-    #print(column, dfn[column].sum().min())
+    return lowest_value
 
 
-# convert list to pd-DataFrame
-df_difference_y1 = pd.DataFrame(difference)"""
+def calculateSumSquareY2():  # erst mal nur für ideal.y1
+    """
+    Returns sum of squared residuals
+    -------
+   berechnet train - ideal pro zeile ^2 
+    """
+    lowest_value = 999999999
+    
 
-#erst mal nur mit liste für y1
+   # while ac_value :
+        
+    for column in ideal.columns[1:]:
+        #print(column)
+        for i in train.index:           
+            difference=[]
+            #print(i)
+            diff = (train['y2'][i] - ideal[column][i]) ** 2
+            difference.append(diff)
+            
+        new_value = sum(difference)
+    
+        if new_value < lowest_value:
+            lowest_value = new_value
+            ideal_function = column
+            pass
+        #else:
+         #   break
+    print("The ideal function for y2 is:",ideal_function)
+        
+    return lowest_value
 
 
-#DB Connection
-#kein plan ey
-"""
-engine = db.create_engine('sqlite:///foo.db')
-connection = engine.connect()
-meta_data = db.MetaData()
+def calculateSumSquareY3():  # erst mal nur für ideal.y1
+    """
+    Returns sum of squared residuals
+    -------
+   berechnet train - ideal pro zeile ^2 
+    """
+    lowest_value = 999999999
+    
+        
+    for column in ideal.columns[1:]:
+        #print(column)
+        for i in train.index:           
+            difference=[]
+            #print(i)
+            diff = (train['y3'][i] - ideal[column][i]) ** 2
+            difference.append(diff)
+            
+        new_value = sum(difference)
+    
+        if new_value < lowest_value:
+            lowest_value = new_value
+            ideal_function = column
+            pass
+        #else:
+         #   break
+    print("The ideal function for y3  is:",ideal_function)
+        
+    return lowest_value
 
-train.to_sql('train', engine)
 
-# wie sehe ich jetzt das tabelle erstellt wurde? 
-"""
+
+def calculateSumSquareY4():  # erst mal nur für ideal.y1
+    """
+    Returns sum of squared residuals
+    -------
+   berechnet train - ideal pro zeile ^2 
+    """
+    lowest_value = 999999999
+    
+
+   # while ac_value :
+        
+    for column in ideal.columns[1:]:
+        #print(column)
+        for i in train.index:           
+            difference=[]
+            #print(i)
+            diff = (train['y4'][i] - ideal[column][i]) ** 2
+            difference.append(diff)
+            
+        new_value = sum(difference)
+    
+        if new_value < lowest_value:
+            lowest_value = new_value
+            ideal_function = column
+            pass
+        #else:
+         #   break
+    print("The ideal function for y4 is:",ideal_function)
+        
+    return lowest_value
+
+
+
 
 
 def main():
     """
     Hauptmethode zum Aufrufen und Orchestrieren des Programms
     """
-    print("ach hallo!")
-    print("def calculateLeastSquare", calculateOneSumSquare())
+
+    #print("ach hallo!")
+    print("LeastSquare Y1 =", calculateSumSquareY1(), "\n")
+    print("LeastSquare Y2 =", calculateSumSquareY2(), "\n")
+    print("LeastSquare Y3 =", calculateSumSquareY3(), "\n")
+    print("LeastSquare Y4 =", calculateSumSquareyY4(), "\n")
+
+
+#    visualize()
+
 
 """ Ausführen der Main Methode"""
-main()
-
-
+if __name__ == '__main__':
+    main()
