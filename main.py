@@ -35,13 +35,8 @@ session = Session()
 
 
 def visualize():
-    print(train.head())
-    train.shape
-    sns.pairplot(train)
-    ideal.head()
-    ideal.shape
-    plt.plot(ideal['x'], ideal['y49'])
-    plt.scatter(train["x"], train["y4"])
+    #plt.plot(ideal['x'], ideal['y33'])
+    #plt.scatter(train["x"], train["y4"])
     plt.show()
 
 
@@ -60,11 +55,13 @@ def calculateSumSquareY1():  # erst mal nur für ideal.y1
 
     for column in ideal.columns[1:]:
         # print(column)
+        difference = []
         for i in train.index:
-            difference = []
             # print(i)
             diff = (train['y1'][i] - ideal[column][i]) ** 2
             difference.append(diff)
+            #print(len(difference))
+
 
         new_value = sum(difference)
 
@@ -79,7 +76,7 @@ def calculateSumSquareY1():  # erst mal nur für ideal.y1
     return lowest_value
 
 
-def calculateSumSquareY2():  # erst mal nur für ideal.y1
+def calculateSumSquareY2():  # erst mal nur für ideal.y2
     """
     Returns sum of squared residuals
     -------
@@ -90,19 +87,21 @@ def calculateSumSquareY2():  # erst mal nur für ideal.y1
     # while ac_value :
 
     for column in ideal.columns[1:]:
-        # print(column)
+        difference = []
+
+        #print(column)
         for i in train.index:
-            difference = []
-            # print(i)
+            #print(column, ideal[column][i])
+            #print(i ,":", train['y2'][i])
             diff = (train['y2'][i] - ideal[column][i]) ** 2
             difference.append(diff)
 
         new_value = sum(difference)
 
         if new_value < lowest_value:
-            lowest_value = new_value
-            ideal_function = column
-            pass
+                 lowest_value = new_value
+                 ideal_function = column
+                 pass
         # else:
         #   break
     print("The ideal function for y2 is:", ideal_function)
@@ -110,7 +109,7 @@ def calculateSumSquareY2():  # erst mal nur für ideal.y1
     return lowest_value
 
 
-def calculateSumSquareY3():  # erst mal nur für ideal.y1
+def calculateSumSquareY3():  # erst mal nur für ideal.y3
     """
     Returns sum of squared residuals
     -------
@@ -119,9 +118,9 @@ def calculateSumSquareY3():  # erst mal nur für ideal.y1
     lowest_value = 999999999
 
     for column in ideal.columns[1:]:
+        difference = []
         # print(column)
         for i in train.index:
-            difference = []
             # print(i)
             diff = (train['y3'][i] - ideal[column][i]) ** 2
             difference.append(diff)
@@ -139,7 +138,7 @@ def calculateSumSquareY3():  # erst mal nur für ideal.y1
     return lowest_value
 
 
-def calculateSumSquareY4():  # erst mal nur für ideal.y1
+def calculateSumSquareY4():  # erst mal nur für ideal.y4
     """
     Returns sum of squared residuals
     -------
@@ -150,9 +149,9 @@ def calculateSumSquareY4():  # erst mal nur für ideal.y1
     # while ac_value :
 
     for column in ideal.columns[1:]:
+        difference = []
         # print(column)
         for i in train.index:
-            difference = []
             # print(i)
             diff = (train['y4'][i] - ideal[column][i]) ** 2
             difference.append(diff)
@@ -175,6 +174,7 @@ def main():
     Hauptmethode zum Aufrufen und Orchestrieren des Programms
     """
 
+    plt.plot(train['x'],ideal['y2'])
     # print("ach hallo!")
     print("LeastSquare Y1 =", calculateSumSquareY1(), "\n")
     print("LeastSquare Y2 =", calculateSumSquareY2(), "\n")
@@ -182,7 +182,7 @@ def main():
     print("LeastSquare Y4 =", calculateSumSquareY4(), "\n")
 
 
-#    visualize()
+    visualize()
 
 
 """ Ausführen der Main Methode"""
