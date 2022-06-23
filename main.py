@@ -36,6 +36,20 @@ session = Session()
 
 def visualize():
     #plt.plot(ideal['x'], ideal['y33'])
+    #sns.pairplot(train)
+    fig, axs = plt.subplots(8)
+    fig.suptitle('Compare train to ideal')
+    axs[0].plot(train['x'],train['y1'])
+    axs[1].plot(train['x'],ideal['y36'])
+    axs[2].plot(train['x'],train['y2'])
+    axs[3].plot(train['x'],ideal['y11'])
+    axs[4].plot(train['x'],train['y3'])
+    axs[5].plot(train['x'],ideal['y2'])
+
+    axs[6].plot(train['x'],train['y4'])
+    axs[7].plot(train['x'],ideal['y33'])
+
+    
     #plt.scatter(train["x"], train["y4"])
     plt.show()
 
