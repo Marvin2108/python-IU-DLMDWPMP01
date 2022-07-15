@@ -71,9 +71,37 @@ def visualize():
     #plt.scatter(train["x"], train["y4"])
     plt.show()
 
+class Calculation:
+    # referenzwert
+    
+    def __init__(self,trainNumber):
+        self.trainNumber = trainNumber
+        
+    def calculate_least_square(trainNumber):
+         difference = []  # save values of residuals
+         lowestValue = 999999999 # needed for selecting lowest value
+         
+          
+         for column in ideal.columns:
+              for i in train.index:
+            
 
-# berechnet Residuen training - ideal
-# NICHT ÄNDERN!! 
+                diff = (train[trainNumber][i] - ideal[column][i]) ** 2
+                difference.append(diff)
+                #print(len(difference))
+
+
+              new_value = sum(difference)
+
+              if new_value < lowestValue:
+                  lowestValue = new_value
+                  ideal_function = column
+                
+         return ideal_function
+                
+   # hier weitermachen!     
+        
+        
 
 def calculateSumSquareY1():  # erst mal nur für ideal.y1
     """
@@ -81,9 +109,8 @@ def calculateSumSquareY1():  # erst mal nur für ideal.y1
     -------
    berechnet train - ideal pro zeile ^2 
     """
-    lowest_value = 999999999
+    lowest_value = 999999999  # indicator for lowest value
 
-    # while ac_value :
 
     for column in ideal.columns:
         # print(column)
@@ -100,11 +127,11 @@ def calculateSumSquareY1():  # erst mal nur für ideal.y1
 
         if new_value < lowest_value:
             lowest_value = new_value
-            ideal_function_y1 = ideal[column]
+            ideal_function_y1 = column
             pass
         # else:
         #   break
-    print("LeastSquareValue y1:", lowest_value)
+  #  print("LeastSquareValue y1:", lowest_value)
 
     return ideal_function_y1
 
@@ -132,11 +159,11 @@ def calculateSumSquareY2():  # erst mal nur für ideal.y2
 
         if new_value < lowest_value:
                  lowest_value = new_value
-                 ideal_function_y2 = ideal[column]
+                 ideal_function_y2 = column
                  pass
         # else:
         #   break
-    print("LeastSquareValue y2:", lowest_value)
+   # print("LeastSquareValue y2:", lowest_value)
 
     return ideal_function_y2
 
@@ -161,11 +188,11 @@ def calculateSumSquareY3():  # erst mal nur für ideal.y3
 
         if new_value < lowest_value:
             lowest_value = new_value
-            ideal_function_y3 = ideal[column]
+            ideal_function_y3 = column
             pass
         # else:
         #   break
-    print("LeastSquareValue y3:", lowest_value)
+#    print("LeastSquareValue y3:", lowest_value)
 
     return ideal_function_y3
 
@@ -192,79 +219,62 @@ def calculateSumSquareY4():  # erst mal nur für ideal.y4
 
         if new_value < lowest_value:
             lowest_value = new_value
-            ideal_function_y4 = ideal[column]
+            ideal_function_y4 = column
+            bezeichner = column
             pass
         # else:
         #   break
-    print("LeastSquareValue y4:", lowest_value)
+   # print("LeastSquareValue y4:", lowest_value)
 
     return ideal_function_y4
 
 
 
 def test_function(): 
-    
-    difference = [] 
-    ideal_functions = pd.DataFrame(column=[calculateSumSquareY1(),calculateSumSquareY2(),
-                       calculateSumSquareY3() ,calculateSumSquareY4()])
-    
-    print(ideal_functions.head())
-   
-    joined_test = test.join(ideal[calculateSumSquareY1()],on='x')
-    print(joined_test) 
-    for row in joined_test:
-        result = (joined_test['y']-joined_test['y36'])
-        print(result)
-        if result < math.sqrt(2) and result > 0:
-            test['comparedY1'] = result
-    
-    print(test.head())
-    
-   
     """
-    #print(ideal.index)
-    for y in ideal_functions:
-        for i in test_sorted.index:
+    Testfunktion zum Validieren der idealen Daten 
+    Testet, welche ideale Funktion am Besten zu dem Testwert passt (Bedingung: < sqrt(2))
+    """
+    test_matrix = test.join(ideal_functions, on='x') # Schnittmenge von Testdaten und idealen Funktionen
+    
+    for column in test_matrix.columns[2:5]:
+        for row in test_matrix.index:
+            result = abs(test_matrix['y'][row] - test_matrix[column][row]) # abs = absoluter Wert            
             
-            print(test_sorted['y'][i] - ideal.loc[i].at[y])
-
-
-            #result = test_sorted['y'][i] - ideal[y][ideal['x'] == i]
-            #print(result)
+            if result < math.sqrt(2) and result > 0:
+                test_matrix.loc[row, 'ideal function'] = column
+                test_matrix.loc[row, 'delta'] = result
                 
-           # if result.all() < math.sqrt(2):
-            #    difference.append(result)
-    """
-    return difference
+    
+    return test_matrix
             
-            
-        
-        #test_index = test_sorted['x'][i]
-        
-       # print(ideal['y33'][ideal['x'][test_index]])
-        
-        
-       # diff = (ideal['y36'][test_index] - test['y'][test_index]) ** 2
-        #print(diff)
-        #difference.append(diff)
+
 
 
 def main():
     """
     Hauptmethode zum Aufrufen und Orchestrieren des Programms
     """
+    
+    global ideal_functions
+    data = {calculateSumSquareY1():ideal[calculateSumSquareY1()],
+            calculateSumSquareY2():ideal[calculateSumSquareY2()],
+            calculateSumSquareY3():ideal[calculateSumSquareY3()],
+            calculateSumSquareY4():ideal[calculateSumSquareY4()]
+           }
+    ideal_functions = pd.DataFrame(data)
+    
  
     print("Ideal function Y1 =", calculateSumSquareY1(), "\n")
     print("Ideal function Y2 =", calculateSumSquareY2(), "\n")
     print("Ideal function Y3 =", calculateSumSquareY3(), "\n")
     print("Ideal function Y4 =", calculateSumSquareY4(), "\n")
     
-    #print(test_sorted.head(16))
-    print(ideal.at[-20.0,'y3'])    
-   
-    #plt.plot(train['x'],train['y1'])
     
-   # print (test_sorted['x'])
+    test = Calculation
+    print (test.calculate_least_square('y1'))
+    
+
 
 #test
 
@@ -273,7 +283,7 @@ def main():
     #plt.plot(test_sorted['x'], test_sorted['y'])
     #print (test_function())
 
-    test_function()
+    print (test_function())
    
 
 
