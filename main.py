@@ -165,7 +165,9 @@ def main():
     idealY2 = Calculation # Instanz 2
     idealY3 = Calculation # Instanz 3
     idealY4 = Calculation # Instanz 4
-     
+    
+    testError = Calculation
+    print (testError.calculate_least_square('y5'))
     
     global ideal_functions # neues DF für ideale Funktionen und entsprechende Werte
     
