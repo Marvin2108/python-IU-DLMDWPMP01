@@ -9,7 +9,6 @@ Created on Mon Jul 11 15:10:53 2022
 # -*- coding: utf-8 -*-
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 import numpy as np
 import sqlite3
 import sqlalchemy as db
@@ -28,6 +27,7 @@ test_sorted.set_index('x', inplace=True)
 ideal = pd.read_csv(
     "/Users/marvinschmitt/Library/CloudStorage/OneDrive-Persönlich/M.Sc. Data Science/06 Python/Datensatz/ideal.csv")
 ideal.set_index('x',inplace=True)
+
 # DB Connection 
 # https://leportella.com/sqlalchemy-tutorial/
 
@@ -51,6 +51,7 @@ def visualize():
     #sns.pairplot(train)
     fig, axs = plt.subplots(nrows=4, ncols=2)
     fig.suptitle('Compare train to ideal')
+
     
     train.plot(y='y1',ax=axs[0,0])
     ideal.plot(y='y36',ax=axs[0,1], label='ideal y36')
@@ -66,200 +67,129 @@ def visualize():
     # train y4
     train.plot(y='y4',ax=axs[3,0])
     ideal.plot(y='y33',ax=axs[3,1],label='ideal y33')
-
     
     #plt.scatter(train["x"], train["y4"])
     plt.show()
 
 
-# berechnet Residuen training - ideal
-# NICHT ÄNDERN!! 
+class Calculation(): 
+    
+    def __init__(self,trainNumber):
+        self.trainNumber = trainNumber
 
-def calculateSumSquareY1():  # erst mal nur für ideal.y1
-    """
-    Returns sum of squared residuals
-    -------
-   berechnet train - ideal pro zeile ^2 
-    """
-    lowest_value = 999999999
+    def calculate_least_square(trainNumber):
+    #    print("o",getattr(idealY1, trainNumber))
 
-    # while ac_value :
+        """
+        Parameters
+        ----------
+        trainNumber : TYPE
+        Funktion berechnet für jedes übergebene y aus Training-Datensatz
+        die passende ideale Funktion mit Hilfe Least Square
 
-    for column in ideal.columns:
-        # print(column)
-        difference = []
-        for i in train.index:
+        Output:
+        -------
+        idealFunction : TYPE
+        liefert ideales y zu dem entsprechenden Trainingsdatensatz
+        """
+        
+        try:
+            if trainNumber not in ['y1','y2','y3','y4']:
+                raise KeyError("Dieses y gibts nicht im Trainings-Datensatz")
+        
+        except KeyError:
+            print("Wert  nicht im Trainings-Datensatz vorhanden!")
             
-            #print(i)
-            diff = (train['y1'][i] - ideal[column][i]) ** 2
-            difference.append(diff)
-            #print(len(difference))
-
-
-        new_value = sum(difference)
-
-        if new_value < lowest_value:
-            lowest_value = new_value
-            ideal_function_y1 = column
-            pass
-        # else:
-        #   break
-    print("LeastSquareValue y1:", lowest_value)
-
-    return ideal_function_y1
-
-
-def calculateSumSquareY2():  # erst mal nur für ideal.y2
-    """
-    Returns sum of squared residuals
-    -------
-   berechnet train - ideal pro zeile ^2 
-    """
-    lowest_value = 999999999
-
-    # while ac_value :
-
-    for column in ideal.columns:
-        # print(column)
-        difference = []
-        for i in train.index:
-            #print(column, ideal[column][i])
-            #print(i ,":", train['y2'][i])
-            diff = (train['y2'][i] - ideal[column][i]) ** 2
-            difference.append(diff)
-
-        new_value = sum(difference)
-
-        if new_value < lowest_value:
-                 lowest_value = new_value
-                 ideal_function_y2 = column
-                 pass
-        # else:
-        #   break
-    print("LeastSquareValue y2:", lowest_value)
-
-    return ideal_function_y2
-
-
-def calculateSumSquareY3():  # erst mal nur für ideal.y3
-    """
-    Returns sum of squared residuals
-    -------
-   berechnet train - ideal pro zeile ^2 
-    """
-    lowest_value = 999999999
-
-    for column in ideal.columns:
-        # print(column)
-        difference = []
-        for i in train.index:
-            # print(i)
-            diff = (train['y3'][i] - ideal[column][i]) ** 2
-            difference.append(diff)
-
-        new_value = sum(difference)
-
-        if new_value < lowest_value:
-            lowest_value = new_value
-            ideal_function_y3 = column
-            pass
-        # else:
-        #   break
-    print("LeastSquareValue y3:", lowest_value)
-
-    return ideal_function_y3
-
-
-def calculateSumSquareY4():  # erst mal nur für ideal.y4
-    """
-    Returns sum of squared residuals
-    -------
-   berechnet train - ideal pro zeile ^2 
-    """
-    lowest_value = 999999999
-
-    # while ac_value :
-
-    for column in ideal.columns:
-        # print(column)
-        difference = []
-        for i in train.index:
-            # print(i)
-            diff = (train['y4'][i] - ideal[column][i]) ** 2
-            difference.append(diff)
-
-        new_value = sum(difference)
-
-        if new_value < lowest_value:
-            lowest_value = new_value
-            ideal_function_y4 = column
-            pass
-        # else:
-        #   break
-    print("LeastSquareValue y4:", lowest_value)
-
-    return ideal_function_y4
-
+        else:
+        
+            lowestValue = 999999999 # needed for calculating lowest value 
+              
+            for column in ideal.columns: # durchlauf für jedes y aus ideal
+                 sumSquared = []  # save values of residuals per column
+                 
+                 for i in train.index: # jede Zeile im Train-Datensatz
+                    diff = (train[trainNumber][i] - ideal[column][i]) ** 2
+                    sumSquared.append(diff) # um später summenwert pro spalte aus ideal zu haben
+    
+                 newValue = sum(sumSquared)
+    
+                 if newValue < lowestValue:  # prüfen, ob ein y Wert aus ideal besser ist als der bisherige beste Wert
+                     lowestValue = newValue
+                     idealFunction = column
+            print("ideal function for",trainNumber, "=", idealFunction)
+                
+            return idealFunction
+                        
 
 
 def test_function(): 
+    """
+    Testfunktion zum Validieren der idealen Daten 
+    Testet, welche ideale Funktion am Besten zu dem Testwert passt (Bedingung: < sqrt(2))
+    """
+    test_matrix = test.join(ideal_functions, on='x') # Schnittmenge von Testdaten und idealen Funktionen
     
-    difference = [] 
-    ideal_functions = [calculateSumSquareY1(),calculateSumSquareY2(),
-                       calculateSumSquareY3() ,calculateSumSquareY4()]
-    print(ideal_functions)
-    
-    #print(ideal.index)
-    for y in ideal_functions:
-        for i in test_sorted.index:
+    for column in test_matrix.columns[2:5]:
+        for row in test_matrix.index:
+            result = abs(test_matrix['y'][row] - test_matrix[column][row]) # abs = absoluter Wert            
             
-            print(test_sorted['y'][i] - ideal.loc[i].at[y])
-            #result = test_sorted['y'][i] - ideal[y][ideal['x'] == i]
-            #print(result)
+            if result < math.sqrt(2) and result > 0:
+                test_matrix.loc[row, 'ideal function'] = column
+                test_matrix.loc[row, 'delta'] = result
                 
-           # if result.all() < math.sqrt(2):
-            #    difference.append(result)
     
-    return difference
-            
-            
+    return test_matrix
+
+
+
+# eine eigene Exception-Klasse definieren
+class RangeError(Exception):
+# einen Konstruktor definieren
+    
+    def __init__(self):
         
-        #test_index = test_sorted['x'][i]
-        
-       # print(ideal['y33'][ideal['x'][test_index]])
-        
-        
-       # diff = (ideal['y36'][test_index] - test['y'][test_index]) ** 2
-        #print(diff)
-        #difference.append(diff)
+        # eine eigene Nachricht als Attribut definieren
+        my_message = 'Fehler'
+        self.my_message = my_message            
+
 
 
 def main():
     """
     Hauptmethode zum Aufrufen und Orchestrieren des Programms
     """
- 
-    print("Ideal function Y1 =", calculateSumSquareY1(), "\n")
-    print("Ideal function Y2 =", calculateSumSquareY2(), "\n")
-    print("Ideal function Y3 =", calculateSumSquareY3(), "\n")
-    print("Ideal function Y4 =", calculateSumSquareY4(), "\n")
-    
-    #print(test_sorted.head(16))
-    print(ideal.at[-20.0,'y3'])    
-   
-    #plt.plot(train['x'],train['y1'])
-    
-   # print (test_sorted['x'])
-
-#test
-
     visualize()
+
+   
+    idealY1 = Calculation # Instanz 1
+    idealY2 = Calculation # Instanz 2
+    idealY3 = Calculation # Instanz 3
+    idealY4 = Calculation # Instanz 4
+     
+    
+    global ideal_functions # neues DF für ideale Funktionen und entsprechende Werte
+    
+    try:
+        data = {idealY1.calculate_least_square('y1') : ideal[idealY1.calculate_least_square('y1')],
+                idealY2.calculate_least_square('y2') : ideal[idealY2.calculate_least_square('y2')],
+                idealY3.calculate_least_square('y3') : ideal[idealY3.calculate_least_square('y3')],
+               # idealY3.calculate_least_square('y3') : ideal[idealY3.calculate_least_square('y3')],
+                idealY4.calculate_least_square('y4') : ideal[idealY4.calculate_least_square('y4')]
+                }
+    
+    except KeyError:
+        print("y-Wert nicht in Trainingsdaten vorhanden")
+    
+    else:
+        ideal_functions = pd.DataFrame(data)
+        print (test_function())
+        
+    
+
     #print(test_sorted['x'])
     #plt.plot(test_sorted['x'], test_sorted['y'])
     #print (test_function())
 
-    test_function()
-   
    
 
 
