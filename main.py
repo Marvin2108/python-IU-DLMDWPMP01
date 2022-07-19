@@ -98,7 +98,7 @@ class Calculation():
                 raise KeyError("Dieses y gibts nicht im Trainings-Datensatz")
         
         except KeyError:
-            print("Wert  nicht im Trainings-Datensatz vorhanden!")
+            print("Wert", trainNumber,  "nicht im Trainings-Datensatz vorhanden!")
             
         else:
         
@@ -122,10 +122,16 @@ class Calculation():
                         
 
 
-def test_function(): 
+def test_function():
     """
-    Testfunktion zum Validieren der idealen Daten 
+    Testfunktion zum Validieren der zuvor ermittelten idealen Datensätze 
     Testet, welche ideale Funktion am Besten zu dem Testwert passt (Bedingung: < sqrt(2))
+
+    Returns
+    -------
+    test_matrix : TYPE: DataFrame
+        Spalten: x,y, 4 ideale Funktionen, best fit, delta.
+
     """
     test_matrix = test.join(ideal_functions, on='x') # Schnittmenge von Testdaten und idealen Funktionen
     
@@ -134,7 +140,7 @@ def test_function():
             result = abs(test_matrix['y'][row] - test_matrix[column][row]) # abs = absoluter Wert            
             
             if result < math.sqrt(2) and result > 0:
-                test_matrix.loc[row, 'ideal function'] = column
+                test_matrix.loc[row, 'best fit'] = column
                 test_matrix.loc[row, 'delta'] = result
                 
     
