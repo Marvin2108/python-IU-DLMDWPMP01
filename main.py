@@ -95,9 +95,9 @@ class Calculation():
         
         try:
             if trainNumber not in ['y1','y2','y3','y4']:
-                raise KeyError("Dieses y gibts nicht im Trainings-Datensatz")
+                raise RangeError
         
-        except KeyError:
+        except RangeError:
             print("Wert", trainNumber,  "nicht im Trainings-Datensatz vorhanden!")
             
         else:
@@ -155,7 +155,7 @@ class RangeError(Exception):
     def __init__(self):
         
         # eine eigene Nachricht als Attribut definieren
-        my_message = 'Fehler'
+        my_message = 'Eigener Fehler'
         self.my_message = my_message            
 
 
@@ -171,9 +171,7 @@ def main():
     idealY2 = Calculation # Instanz 2
     idealY3 = Calculation # Instanz 3
     idealY4 = Calculation # Instanz 4
-    
-    testError = Calculation
-    print (testError.calculate_least_square('y5'))
+
     
     global ideal_functions # neues DF für ideale Funktionen und entsprechende Werte
     
@@ -181,7 +179,7 @@ def main():
         data = {idealY1.calculate_least_square('y1') : ideal[idealY1.calculate_least_square('y1')],
                 idealY2.calculate_least_square('y2') : ideal[idealY2.calculate_least_square('y2')],
                 idealY3.calculate_least_square('y3') : ideal[idealY3.calculate_least_square('y3')],
-               # idealY3.calculate_least_square('y3') : ideal[idealY3.calculate_least_square('y3')],
+                idealY3.calculate_least_square('y20') : ideal[idealY3.calculate_least_square('y20')],  # test exception
                 idealY4.calculate_least_square('y4') : ideal[idealY4.calculate_least_square('y4')]
                 }
     

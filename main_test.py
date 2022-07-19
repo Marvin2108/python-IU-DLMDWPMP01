@@ -18,12 +18,12 @@ class UnitTestLeastSquares(unittest.TestCase):
         self.assertEqual(testY4.calculate_least_square('y4'), 'y33', "Sollte y33 rauskommen")
         
         
-        with self.assertRaises(KeyError):
+        with self.assertRaises(main.RangeError):
              testError.calculate_least_square('y64')   # geht nicht
 
     def test_test_function (self):
-        
-        self.assertIsNone(main.test_function())
+        main.main()
+        self.assertIsNotNone(main.test_function())
 
  
 
