@@ -42,8 +42,8 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 
-# train.to_sql('train',engine, index=False, if_exists='append')
-# ideal.to_sql('ideal',engine, index=False, if_exists='append')
+train.to_sql('train',engine, index=True, if_exists='replace')
+ideal.to_sql('ideal',engine, index=True, if_exists='replace')
 
 
 def visualize():
@@ -142,6 +142,11 @@ def test_function():
             if result < math.sqrt(2) and result > 0:
                 test_matrix.loc[row, 'best fit'] = column
                 test_matrix.loc[row, 'delta'] = result
+    
+    test_matrix.to_sql('test',engine, index=False, if_exists='replace')
+    
+    plt.scatter(test_matrix['x'],test_matrix['y'])
+   # plt.scatter(test_matrix['x'],test_matrix[''])
                 
     
     return test_matrix
@@ -179,7 +184,7 @@ def main():
         data = {idealY1.calculate_least_square('y1') : ideal[idealY1.calculate_least_square('y1')],
                 idealY2.calculate_least_square('y2') : ideal[idealY2.calculate_least_square('y2')],
                 idealY3.calculate_least_square('y3') : ideal[idealY3.calculate_least_square('y3')],
-                idealY3.calculate_least_square('y20') : ideal[idealY3.calculate_least_square('y20')],  # test exception
+              #  idealY3.calculate_least_square('y20') : ideal[idealY3.calculate_least_square('y20')],  # test exception
                 idealY4.calculate_least_square('y4') : ideal[idealY4.calculate_least_square('y4')]
                 }
     
