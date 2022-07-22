@@ -156,9 +156,9 @@ def test_function():
     
     test_matrix.to_sql('test',engine, index=False, if_exists='replace')
     
-    plt.scatter(test_matrix['x'],test_matrix['y'])
-   # plt.scatter(test_matrix['x'],test_matrix[''])
-                
+    ax = test_matrix.plot(x='x',y=['y'],kind='scatter', label='Test')
+    training.plot(ax=ax,use_index=True)
+    ideal_functions.plot(ax=ax)    
     
     return test_matrix
 
@@ -196,7 +196,7 @@ def main():
         data = {idealY1.calculate_least_square('y1') : ideal[idealY1.calculate_least_square('y1')],
                 idealY2.calculate_least_square('y2') : ideal[idealY2.calculate_least_square('y2')],
                 idealY3.calculate_least_square('y3') : ideal[idealY3.calculate_least_square('y3')],
-              #  idealY3.calculate_least_square('y20') : ideal[idealY3.calculate_least_square('y20')],  # test exception
+               # idealY3.calculate_least_square('y20') : ideal[idealY3.calculate_least_square('y20')],  # test exception
                 idealY4.calculate_least_square('y4') : ideal[idealY4.calculate_least_square('y4')]
                 }
     
