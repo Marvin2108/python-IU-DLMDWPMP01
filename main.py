@@ -12,93 +12,104 @@ import matplotlib.pyplot as plt
 import numpy as np
 import sqlite3
 import sqlalchemy as db
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy_utils import database_exists, create_database
 import math
 
-# Datensätze laden
-train = pd.read_csv(
-    "/Users/marvinschmitt/Library/CloudStorage/OneDrive-Persönlich/M.Sc. Data Science/06 Python/Datensatz/train.csv")
-train.set_index('x',inplace=True)
-test = pd.read_csv(
-    "/Users/marvinschmitt/Library/CloudStorage/OneDrive-Persönlich/M.Sc. Data Science/06 Python/Datensatz/test.csv")
-test_sorted = test.sort_values('x')
-test_sorted.set_index('x', inplace=True)
-#print(test_sorted.head(21))
+"""
+loading given csv files into a pandas dataframe
+"""
+
+training = pd.read_csv(
+    "/Users/marvinschmitt/Library/CloudStorage/OneDrive-Persönlich/M.Sc. Data Science/06 Python/Datensatz/training.csv")
+training.set_index('x',inplace=True)
 
 ideal = pd.read_csv(
     "/Users/marvinschmitt/Library/CloudStorage/OneDrive-Persönlich/M.Sc. Data Science/06 Python/Datensatz/ideal.csv")
 ideal.set_index('x',inplace=True)
 
-# DB Connection 
-# https://leportella.com/sqlalchemy-tutorial/
+test = pd.read_csv(
+    "/Users/marvinschmitt/Library/CloudStorage/OneDrive-Persönlich/M.Sc. Data Science/06 Python/Datensatz/test.csv")
 
-engine = db.create_engine(
-    "sqlite+pysqlite:////Users/marvinschmitt/Library/CloudStorage/OneDrive-Persönlich/M.Sc. Data Science/06 "
-    "Python/python-IU/pythonsqlite.db",
-    echo=True, future=True)
 
-from sqlalchemy.orm import sessionmaker
+"""
+This section creates a database, builds up a session to keep data and
+creates new tables for training and test data
+"""
+
+engine = db.create_engine("sqlite:///database.sqlite")
+if not database_exists(engine.url):
+    create_database(engine.url)
+
+#print(database_exists(engine.url), engine.url)
 
 Session = sessionmaker(bind=engine)
 session = Session()
 
 
-train.to_sql('train',engine, index=True, if_exists='replace')
-ideal.to_sql('ideal',engine, index=True, if_exists='replace')
+training.to_sql('training',engine, index=True, if_exists='replace') # creates new table in db out of dataframe
+ideal.to_sql('ideal',engine, index=True, if_exists='replace') # creates new table in db out of dataframe
 
 
 def visualize():
+    """
+    This function creates subplots to compare training data with its corresponding ideal function
+    """
     #plt.plot(ideal['x'], ideal['y33'])
-    #sns.pairplot(train)
+    #sns.pairplot(training)
     fig, axs = plt.subplots(nrows=4, ncols=2)
-    fig.suptitle('Compare train to ideal')
+    fig.suptitle('Compare training to ideal')
 
     
-    train.plot(y='y1',ax=axs[0,0])
+    training.plot(y='y1',ax=axs[0,0])
     ideal.plot(y='y36',ax=axs[0,1], label='ideal y36')
  
-    # train y2
-    train.plot(y='y2',ax=axs[1,0])
+    # training y2
+    training.plot(y='y2',ax=axs[1,0])
     ideal.plot(y='y11',ax=axs[1,1], label='ideal y11')
     
-    # train y3
-    train.plot(y='y3',ax=axs[2,0])
+    # training y3
+    training.plot(y='y3',ax=axs[2,0])
     ideal.plot(y='y2',ax=axs[2,1],label='ideal y2')
     
-    # train y4
-    train.plot(y='y4',ax=axs[3,0])
+    # training y4
+    training.plot(y='y4',ax=axs[3,0])
     ideal.plot(y='y33',ax=axs[3,1],label='ideal y33')
     
-    #plt.scatter(train["x"], train["y4"])
+    #plt.scatter(training["x"], training["y4"])
     plt.show()
 
 
 class Calculation(): 
     
-    def __init__(self,trainNumber):
-        self.trainNumber = trainNumber
+    def __init__(self,trainingNumber):
+        self.trainingNumber = trainingNumber
 
-    def calculate_least_square(trainNumber):
-    #    print("o",getattr(idealY1, trainNumber))
+    def calculate_least_square(trainingNumber):
+    #    print("o",getattr(idealY1, trainingNumber))
 
         """
         Parameters
         ----------
-        trainNumber : TYPE
-        Funktion berechnet für jedes übergebene y aus Training-Datensatz
-        die passende ideale Funktion mit Hilfe Least Square
+        trainingNumber : TYPE
+        this function calculates for each given trainingNumber its ideal function
+        from the ideal dataset using Minimum SumLeastSquared
 
         Output:
         -------
         idealFunction : TYPE
-        liefert ideales y zu dem entsprechenden Trainingsdatensatz
+        returns corresponding ideal function for given trainingNumber
+        e.g. y36
         """
         
+        # Exception for only 4 allowed trainingNumbers
         try:
-            if trainNumber not in ['y1','y2','y3','y4']:
+            if trainingNumber not in ['y1','y2','y3','y4']:
                 raise RangeError
         
         except RangeError:
-            print("Wert", trainNumber,  "nicht im Trainings-Datensatz vorhanden!")
+            print("This TrainingNumber", trainingNumber,  "is not in training-dataset!\n",
+                  "Please choose a value between y1 and y4")
             
         else:
         
@@ -107,8 +118,8 @@ class Calculation():
             for column in ideal.columns: # durchlauf für jedes y aus ideal
                  sumSquared = []  # save values of residuals per column
                  
-                 for i in train.index: # jede Zeile im Train-Datensatz
-                    diff = (train[trainNumber][i] - ideal[column][i]) ** 2
+                 for i in training.index: # jede Zeile im training-Datensatz
+                    diff = (training[trainingNumber][i] - ideal[column][i]) ** 2
                     sumSquared.append(diff) # um später summenwert pro spalte aus ideal zu haben
     
                  newValue = sum(sumSquared)
@@ -116,7 +127,7 @@ class Calculation():
                  if newValue < lowestValue:  # prüfen, ob ein y Wert aus ideal besser ist als der bisherige beste Wert
                      lowestValue = newValue
                      idealFunction = column
-            print("ideal function for",trainNumber, "=", idealFunction)
+            print("ideal function for",trainingNumber, "=", idealFunction)
                 
             return idealFunction
                         
@@ -167,18 +178,19 @@ class RangeError(Exception):
 
 def main():
     """
-    Hauptmethode zum Aufrufen und Orchestrieren des Programms
+    This is the main method of the Python script which orchestrates the program
     """
+    
     visualize()
 
-   
+    # creating instances for each y in training dataset
     idealY1 = Calculation # Instanz 1
     idealY2 = Calculation # Instanz 2
     idealY3 = Calculation # Instanz 3
     idealY4 = Calculation # Instanz 4
 
     
-    global ideal_functions # neues DF für ideale Funktionen und entsprechende Werte
+    global ideal_functions # new DF in order to save determined ideal functions
     
     try:
         data = {idealY1.calculate_least_square('y1') : ideal[idealY1.calculate_least_square('y1')],
@@ -189,7 +201,7 @@ def main():
                 }
     
     except KeyError:
-        print("y-Wert nicht in Trainingsdaten vorhanden")
+        print("This y-value is not within the training dataset!")
     
     else:
         ideal_functions = pd.DataFrame(data)
@@ -202,8 +214,6 @@ def main():
     #print (test_function())
 
    
-
-
 """ Ausführen der Main Methode"""
 if __name__ == '__main__':
     main()
