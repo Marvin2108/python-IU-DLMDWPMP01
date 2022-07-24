@@ -53,13 +53,13 @@ ideal.to_sql('ideal',engine, index=True, if_exists='replace') # creates new tabl
 
 def visualize():
     """
-    This function creates subplots to compare training data with its corresponding ideal function
+    This function creates subplots to compare training data 
+    with its corresponding ideal function
     """
     #plt.plot(ideal['x'], ideal['y33'])
     #sns.pairplot(training)
     fig, axs = plt.subplots(nrows=4, ncols=2)
     fig.suptitle('Compare training to ideal')
-
     
     training.plot(y='y1',ax=axs[0,0])
     ideal.plot(y='y36',ax=axs[0,1], label='ideal y36')
@@ -156,10 +156,10 @@ def test_function():
     
     test_matrix.to_sql('test',engine, index=False, if_exists='replace')
     
-    ax = test_matrix.plot(x='x',y=['y'],kind='scatter', label='Test')
-    training.plot(ax=ax,use_index=True)
+    ax = test_matrix.plot(x='x',y=['y'],kind='scatter', label='test-data',color='purple')
+   # training.plot(ax=ax,use_index=True, label='training')
     ideal_functions.plot(ax=ax)    
-    
+
     return test_matrix
 
 
@@ -205,7 +205,7 @@ def main():
     
     else:
         ideal_functions = pd.DataFrame(data)
-        print (test_function())
+        print (test_function()) # returns dataframe of test_matrix
         
     
 
