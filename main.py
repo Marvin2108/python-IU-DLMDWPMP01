@@ -41,10 +41,10 @@ engine = db.create_engine("sqlite:///database.sqlite")
 if not database_exists(engine.url):
     create_database(engine.url)
 
-#print(database_exists(engine.url), engine.url)
+"""#print(database_exists(engine.url), engine.url)
 
 Session = sessionmaker(bind=engine)
-session = Session()
+session = Session()"""
 
 
 training.to_sql('training',engine, index=True, if_exists='replace') # creates new table in db out of dataframe
@@ -84,6 +84,8 @@ class Calculation():
     
     def __init__(self,trainingNumber):
         self.trainingNumber = trainingNumber
+        
+class Least_square_method(Calculation):
 
     def calculate_least_square(trainingNumber):
     #    print("o",getattr(idealY1, trainingNumber))
@@ -184,10 +186,10 @@ def main():
     visualize()
 
     # creating instances for each y in training dataset
-    idealY1 = Calculation # Instanz 1
-    idealY2 = Calculation # Instanz 2
-    idealY3 = Calculation # Instanz 3
-    idealY4 = Calculation # Instanz 4
+    idealY1 = Least_square_method # Instanz 1
+    idealY2 = Least_square_method # Instanz 2
+    idealY3 = Least_square_method # Instanz 3
+    idealY4 = Least_square_method # Instanz 4
 
     
     global ideal_functions # new DF in order to save determined ideal functions
@@ -208,11 +210,6 @@ def main():
         print (test_function()) # returns dataframe of test_matrix
         
     
-
-    #print(test_sorted['x'])
-    #plt.plot(test_sorted['x'], test_sorted['y'])
-    #print (test_function())
-
    
 """ Ausführen der Main Methode"""
 if __name__ == '__main__':
