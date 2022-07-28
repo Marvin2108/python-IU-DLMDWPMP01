@@ -11,22 +11,33 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import sqlalchemy as db
 from sqlalchemy_utils import database_exists, create_database
+import os
 import math
+
+dirname = os.path.dirname(__file__) # get current directory
+print ("current directory:", dirname)
+
+
 
 """
 loading given csv files into a pandas dataframe
+using relative path to find CSV-files 
+The CSV-files have to be in the same path! 
 """
 
-training = pd.read_csv(
-    "/Users/marvinschmitt/Library/CloudStorage/OneDrive-Persönlich/M.Sc. Data Science/06 Python/Datensatz/training.csv")
+# training dataset    
+training = pd.read_csv(os.path.join(dirname, 'training.csv')) # relative directory to current file
 training.set_index('x',inplace=True) # set index to x
 
+# ideal dataset 
 ideal = pd.read_csv(
-    "/Users/marvinschmitt/Library/CloudStorage/OneDrive-Persönlich/M.Sc. Data Science/06 Python/Datensatz/ideal.csv")
+        os.path.join(dirname, 'ideal.csv'))
 ideal.set_index('x',inplace=True) # set index to x
 
+# test dataset    
 test = pd.read_csv(
-    "/Users/marvinschmitt/Library/CloudStorage/OneDrive-Persönlich/M.Sc. Data Science/06 Python/Datensatz/test.csv")
+        os.path.join(dirname, 'test.csv'))
+
 
 
 """
@@ -44,7 +55,7 @@ ideal.to_sql('ideal',engine, index=True, if_exists='replace') # creates new tabl
 
 
 """
-creating own Exception class called RangeError
+creating own Exception class called RangeError for checking training column
 """
 class RangeError(Exception):
 # einen Konstruktor definieren
@@ -54,6 +65,9 @@ class RangeError(Exception):
         # eine eigene Nachricht als Attribut definieren
         my_message = 'Eigener Fehler'
         self.my_message = my_message
+        
+
+
         
         
 """
