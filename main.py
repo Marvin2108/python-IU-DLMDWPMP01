@@ -79,47 +79,52 @@ class Calculation():
     def __init__(self,trainingNumber):
         self.trainingNumber = trainingNumber
         
+    def calculate_least_square(self):
+        pass
+    
+
+        
 class LeastSquareMethod(Calculation):
+    def calculate_least_square(self,trainingNumber):
+       self.trainingNumber = trainingNumber
 
-    def calculate_least_square(trainingNumber):
-    #    print("o",getattr(idealY1, trainingNumber))
+       """
+       this function calculates for each given trainingNumber its ideal function
+       from the ideal dataset using Minimum SumLeastSquared
 
-        """
-        this function calculates for each given trainingNumber its ideal function
-        from the ideal dataset using Minimum SumLeastSquared
-
-        Output:
-        -------
-        idealFunction : TYPE
-        returns corresponding ideal function for given trainingNumber
-        e.g. y36
-        """
-        
-        # Exception for only 4 allowed trainingNumbers
-        try:
-            if trainingNumber not in ['y1','y2','y3','y4']:
-                raise RangeError
-        except:
-            print("RangeError: This is a range error. Watch out!")
-        else:
-        
-            lowestValue = 999999999 # needed for calculating lowest value 
-              
-            for column in ideal.columns: # durchlauf für jedes y aus ideal
-                 sumSquared = []  # save values of residuals per column
-                 
-                 for i in training.index: # jede Zeile im training-Datensatz
-                    diff = (training[trainingNumber][i] - ideal[column][i]) ** 2
-                    sumSquared.append(diff) # um später summenwert pro spalte aus ideal zu haben
-    
-                 newValue = sum(sumSquared)
-    
-                 if newValue < lowestValue:  # prüfen, ob ein y Wert aus ideal besser ist als der bisherige beste Wert
-                     lowestValue = newValue
-                     idealFunction = column
-            print("ideal function for",trainingNumber, "=", idealFunction)
+       Output:
+       -------
+       idealFunction : TYPE
+       returns corresponding ideal function for given trainingNumber
+       e.g. y36
+       """
+       
+       # Exception for only 4 allowed trainingNumbers
+       try:
+           if trainingNumber not in ['y1','y2','y3','y4']:
+               raise RangeError
+       except:
+           print("RangeError: This value", trainingNumber ,", is a range error. Watch out!")
+       else:
+       
+           lowestValue = 999999999 # needed for calculating lowest value 
+             
+           for column in ideal.columns: # durchlauf für jedes y aus ideal
+                sumSquared = []  # save values of residuals per column
                 
-            return idealFunction
+                for row in training.index: # jede Zeile im training-Datensatz
+                   diff = (training[trainingNumber][row] - ideal[column][row]) ** 2
+                   sumSquared.append(diff) # um später summenwert pro spalte aus ideal zu haben
+   
+                newValue = sum(sumSquared)
+   
+                if newValue < lowestValue:  # prüfen, ob ein y Wert aus ideal 
+                                            # besser ist als der bisherige beste Wert
+                    lowestValue = newValue
+                    idealFunction = column
+           print("ideal function for",trainingNumber, "=", idealFunction)
+               
+           return idealFunction    
                         
 
 def visualize_train_to_ideal():
@@ -191,17 +196,21 @@ def main():
     global ideal_functions # new DF in order to save determined ideal functions
     
     # create instances for each training column
-    idealY1 = LeastSquareMethod # Instanz 1
-    idealY2 = LeastSquareMethod # Instanz 2
-    idealY3 = LeastSquareMethod # Instanz 3
-    idealY4 = LeastSquareMethod # Instanz 4
+    idealY1 = LeastSquareMethod('y1') # Instanz 1
+    idealY2 = LeastSquareMethod('y2') # Instanz 2
+    idealY3 = LeastSquareMethod('y3') # Instanz 3
+    idealY4 = LeastSquareMethod('y4') # Instanz 4
+    
+    idealY18 = LeastSquareMethod('y18') # instance for testing Exception
     
     try:
-        data = {idealY1.calculate_least_square('y1') : ideal[idealY1.calculate_least_square('y1')],
-                idealY2.calculate_least_square('y2') : ideal[idealY2.calculate_least_square('y2')],
-                idealY3.calculate_least_square('y3') : ideal[idealY3.calculate_least_square('y3')],
-               # idealY3.calculate_least_square('y20') : ideal[idealY3.calculate_least_square('y20')],  # test exception
-                idealY4.calculate_least_square('y4') : ideal[idealY4.calculate_least_square('y4')]
+        data = {idealY1.calculate_least_square(idealY1.trainingNumber) : ideal[idealY1.calculate_least_square(idealY1.trainingNumber)],
+                idealY2.calculate_least_square(idealY2.trainingNumber) : ideal[idealY2.calculate_least_square(idealY2.trainingNumber)],
+                idealY3.calculate_least_square(idealY3.trainingNumber) : ideal[idealY3.calculate_least_square(idealY3.trainingNumber)],
+
+                idealY18.calculate_least_square('y18'): ideal[idealY18.calculate_least_square('y18')],
+
+                idealY4.calculate_least_square(idealY4.trainingNumber) : ideal[idealY4.calculate_least_square(idealY4.trainingNumber)]
                 }
     
     except KeyError:
