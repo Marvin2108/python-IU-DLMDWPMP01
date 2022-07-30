@@ -67,8 +67,6 @@ class RangeError(Exception):
         self.my_message = my_message
         
 
-
-        
         
 """
 This section creates Calculation super class with trainingNumber as variable
@@ -123,6 +121,8 @@ class LeastSquareMethod(Calculation):
                     lowestValue = newValue
                     idealFunction = column
            print("ideal function for",trainingNumber, "=", idealFunction)
+           
+           visualize_train_to_ideal() # call function to visualize data
                
            return idealFunction    
                         
@@ -138,19 +138,19 @@ def visualize_train_to_ideal():
     fig.suptitle('Compare training to ideal')
     
     training.plot(y='y1',ax=axs[0,0])
-    ideal.plot(y='y36',ax=axs[0,1], label='ideal y36')
+    ideal_functions.plot(y='y36',ax=axs[0,1], label='ideal y36')
  
     # training y2
     training.plot(y='y2',ax=axs[1,0])
-    ideal.plot(y='y11',ax=axs[1,1], label='ideal y11')
+    ideal_functions.plot(y='y11',ax=axs[1,1], label='ideal y11')
     
     # training y3
     training.plot(y='y3',ax=axs[2,0])
-    ideal.plot(y='y2',ax=axs[2,1],label='ideal y2')
+    ideal_functions.plot(y='y2',ax=axs[2,1],label='ideal y2')
     
     # training y4
     training.plot(y='y4',ax=axs[3,0])
-    ideal.plot(y='y33',ax=axs[3,1],label='ideal y33')
+    ideal_functions.plot(y='y33',ax=axs[3,1],label='ideal y33')
     
     #plt.scatter(training["x"], training["y4"])
     plt.show()
@@ -208,7 +208,7 @@ def main():
                 idealY2.calculate_least_square(idealY2.trainingNumber) : ideal[idealY2.calculate_least_square(idealY2.trainingNumber)],
                 idealY3.calculate_least_square(idealY3.trainingNumber) : ideal[idealY3.calculate_least_square(idealY3.trainingNumber)],
 
-                idealY18.calculate_least_square('y18'): ideal[idealY18.calculate_least_square('y18')],
+            #    idealY18.calculate_least_square('y18'): ideal[idealY18.calculate_least_square('y18')],
 
                 idealY4.calculate_least_square(idealY4.trainingNumber) : ideal[idealY4.calculate_least_square(idealY4.trainingNumber)]
                 }
@@ -222,7 +222,7 @@ def main():
 
     
 
-    visualize_train_to_ideal() # call function to visualize ideal data compared to training data
+   # visualize_train_to_ideal() # call function to visualize ideal data compared to training data
 
 
 
