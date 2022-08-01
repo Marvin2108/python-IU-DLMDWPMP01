@@ -174,13 +174,14 @@ def test_function():
         for row in test_matrix.index:
             result = abs(test_matrix['y'][row] - test_matrix[column][row]) # abs = absoluter Wert            
             
-            if result < math.sqrt(2) and result > 0:
+            if 0 < result <= math.sqrt(2):
                 test_matrix.loc[row, 'best fit'] = column
                 test_matrix.loc[row, 'delta'] = result
+                
     
     test_matrix.to_sql('test',engine, index=False, if_exists='replace')
     
-    ax = test_matrix.plot(x='x',y=['y'],kind='scatter', label='test-data',color='purple')
+    ax = test_matrix.plot(x='x',y='y',kind='scatter', label='test-data',color='purple')
    # training.plot(ax=ax,use_index=True, label='training')
     ideal_functions.plot(ax=ax)    
 
