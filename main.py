@@ -63,7 +63,7 @@ class RangeError(Exception):
     def __init__(self):
         
         # eine eigene Nachricht als Attribut definieren
-        my_message = 'Eigener Fehler'
+        my_message = 'This is my error'
         self.my_message = my_message
         
 
