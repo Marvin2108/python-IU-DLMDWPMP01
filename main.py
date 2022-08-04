@@ -116,14 +116,12 @@ class LeastSquareMethod(Calculation):
    
                 newValue = sum(sumSquared)
    
-                if newValue < lowestValue:  # prüfen, ob ein y Wert aus ideal 
-                                            # besser ist als der bisherige beste Wert
+                if newValue < lowestValue:  # check if a value of ideal
+                                            # is lower than the actual value
                     lowestValue = newValue
                     idealFunction = column
            print("ideal function for",trainingNumber, "=", idealFunction)
-           
-           visualize_train_to_ideal() # call function to visualize data
-               
+                          
            return idealFunction    
                         
 
@@ -159,31 +157,43 @@ def visualize_train_to_ideal():
 
 def test_function():
     """
-    Testfunktion zum Validieren der zuvor ermittelten idealen Datensätze 
-    Testet, welche ideale Funktion am Besten zu dem Testwert passt (Bedingung: < sqrt(2))
-
+    this function tests, which ideal function fits the best to an element of the test dataset
+    the condition to check if it 'fits' is that the residuals are < sqrt(2)
     Returns
     -------
     test_matrix : TYPE: DataFrame
-        Spalten: x,y, 4 ideale Funktionen, best fit, delta.
+        columns: x,y, 4 ideal functions, best fit, delta.
 
     """
-    test_matrix = test.join(ideal_functions, on='x') # Schnittmenge von Testdaten und idealen Funktionen
+    test_matrix = test.join(ideal_functions, on='x') # intersection of test and ideal data
     
-    for column in test_matrix.columns[2:5]:
+    for column in test_matrix.columns[2:6]:
         for row in test_matrix.index:
-            result = abs(test_matrix['y'][row] - test_matrix[column][row]) # abs = absoluter Wert            
+            result = abs(test_matrix['y'][row] - test_matrix[column][row]) # abs = absolute value          
             
             if 0 < result <= math.sqrt(2):
                 test_matrix.loc[row, 'best fit'] = column
                 test_matrix.loc[row, 'delta'] = result
                 
     
-    test_matrix.to_sql('test',engine, index=False, if_exists='replace')
+    test_matrix.to_sql('test',engine, index=False, if_exists='replace') # save table into databse
     
     ax = test_matrix.plot(x='x',y='y',kind='scatter', label='test-data',color='purple')
-   # training.plot(ax=ax,use_index=True, label='training')
     ideal_functions.plot(ax=ax)    
+    
+    # section to plot outliers with no fitting ideal function
+    
+    outliers = {}
+    for row in test_matrix.index:
+        if pd.isnull(test_matrix['best fit'][row]):
+            outliers[test_matrix['x'][row]] = [test_matrix['y'][row]]
+    #print(outliers)
+    
+    outliers_df = pd.DataFrame.from_dict(data=outliers, orient='index',columns=['y'])
+    outliers_df.reset_index(inplace=True)
+    print(outliers_df)
+            #print(test_matrix['x'][row], test_matrix['y'][row])
+    outliers_df.plot(ax=ax,x='index',y='y',kind='scatter', color='red', label='outliers')    
 
     return test_matrix          
 
@@ -218,17 +228,17 @@ def main():
         print("KeyError: This y-value is not within the training dataset!")
     
     else:
+        visualize_train_to_ideal() # call function to visualize ideal data compared to training data
+
         ideal_functions = pd.DataFrame(data)
         print (test_function()) # returns dataframe of test_matrix
 
     
 
-   # visualize_train_to_ideal() # call function to visualize ideal data compared to training data
-
-
-
 
    
-""" Ausführen der Main Methode"""
+""" 
+run main function 
+"""
 if __name__ == '__main__':
     main()
