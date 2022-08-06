@@ -212,15 +212,11 @@ def main():
     idealY3 = LeastSquareMethod('y3') # Instanz 3
     idealY4 = LeastSquareMethod('y4') # Instanz 4
     
-    idealY18 = LeastSquareMethod('y18') # instance for testing Exception
     
     try:
         data = {idealY1.calculate_least_square(idealY1.trainingNumber) : ideal[idealY1.calculate_least_square(idealY1.trainingNumber)],
                 idealY2.calculate_least_square(idealY2.trainingNumber) : ideal[idealY2.calculate_least_square(idealY2.trainingNumber)],
                 idealY3.calculate_least_square(idealY3.trainingNumber) : ideal[idealY3.calculate_least_square(idealY3.trainingNumber)],
-
-            #    idealY18.calculate_least_square('y18'): ideal[idealY18.calculate_least_square('y18')],
-
                 idealY4.calculate_least_square(idealY4.trainingNumber) : ideal[idealY4.calculate_least_square(idealY4.trainingNumber)]
                 }
     
@@ -230,7 +226,7 @@ def main():
     else:
         visualize_train_to_ideal() # call function to visualize ideal data compared to training data
 
-        ideal_functions = pd.DataFrame(data)
+        ideal_functions = pd.DataFrame(data) # create ideal_functions DF
         print (test_function()) # returns dataframe of test_matrix
 
     
@@ -238,7 +234,7 @@ def main():
 
    
 """ 
-run main function 
+run main function only if its run directly
 """
 if __name__ == '__main__':
     main()
