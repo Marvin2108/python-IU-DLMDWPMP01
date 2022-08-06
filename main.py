@@ -224,9 +224,11 @@ def main():
         print("KeyError: This y-value is not within the training dataset!")
     
     else:
+        ideal_functions = pd.DataFrame(data) 
+        print(ideal_functions.head())
+        
         visualize_train_to_ideal() # call function to visualize ideal data compared to training data
 
-        ideal_functions = pd.DataFrame(data) # create ideal_functions DF
         print (test_function()) # returns dataframe of test_matrix
 
     
