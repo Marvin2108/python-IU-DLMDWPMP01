@@ -26,7 +26,7 @@ class UnitTestLeastSquares(unittest.TestCase):
 
     def test_test_function (self):
         main.main()
-        self.assertIsNotNone(main.test_function())
+        self.assertIsNotNone(main.test_function()) # checks if returned value is not empty
 
  
 
