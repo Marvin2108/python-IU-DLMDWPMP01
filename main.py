@@ -98,31 +98,29 @@ class LeastSquareMethod(Calculation):
        """
        
        # Exception for only 4 allowed trainingNumbers
-       try:
-           if trainingNumber not in ['y1','y2','y3','y4']:
-               raise RangeError
-       except:
-           print("RangeError: This value", trainingNumber ,", is a range error. Watch out!")
+       if trainingNumber not in ['y1','y2','y3','y4']:
+          raise RangeError
+          print("RangeError: This value", trainingNumber ,", is a range error. Watch out!")
+          
        else:
-       
-           lowestValue = 999999999 # needed for calculating lowest value 
-             
-           for column in ideal.columns: # durchlauf für jedes y aus ideal
-                sumSquared = []  # save values of residuals per column
-                
-                for row in training.index: # jede Zeile im training-Datensatz
-                   diff = (training[trainingNumber][row] - ideal[column][row]) ** 2
-                   sumSquared.append(diff) # um später summenwert pro spalte aus ideal zu haben
-   
-                newValue = sum(sumSquared)
-   
-                if newValue < lowestValue:  # check if a value of ideal
-                                            # is lower than the actual value
-                    lowestValue = newValue
-                    idealFunction = column
-           print("ideal function for",trainingNumber, "=", idealFunction)
+          lowestValue = 999999999 # needed for calculating lowest value
+          
+          for column in ideal.columns: # every y from ideal
+               sumSquared = []  # save values of residuals per column
+               
+               for row in training.index: # every row in training-dataset
+                  diff = (training[trainingNumber][row] - ideal[column][row]) ** 2
+                  sumSquared.append(diff) # for calculating sum per column
+  
+               newValue = sum(sumSquared)
+  
+               if newValue < lowestValue:  # check if a value of ideal
+                                           # is lower than the actual value
+                   lowestValue = newValue
+                   idealFunction = column
+          print("ideal function for",trainingNumber, "=", idealFunction)
                           
-           return idealFunction    
+          return idealFunction    
                         
 
 def visualize_train_to_ideal():
